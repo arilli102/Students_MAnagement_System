@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login - REC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #491a7e, #2a1b5e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+        .login-header {
+            background: #d32f2f;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .login-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .login-body {
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        .password-wrapper {
+            position: relative;
+        }
+        .password-wrapper .fa-eye,
+        .password-wrapper .fa-eye-slash {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: #999;
+            cursor: pointer;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-login:hover {
+            background: #b71c1c;
+        }
+        .login-footer {
+            text-align: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+        .back-to-home {
+            color: #491a7e;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-to-home:hover {
+            text-decoration: underline;
+        }
+        .debug-tools {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background: #f5f5f5;
+        }
+        .debug-tools h4 {
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 16px;
+        }
+        .debug-btn {
+            padding: 8px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .debug-info {
+            font-size: 11px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h2><i class="fas fa-user-graduate"></i> Student Login</h2>
+            <p>Access Student functions</p>
+        </div>
+        {% if msg %}
+        <div style="color: #d32f2f; text-align: center; padding: 10px; background: #ffcdd2;">{{ msg }}</div>
+        {% endif %}
+        <div class="login-body">
+            <form action="{{ url_for('student_login') }}" method="post">
+                <div class="form-group">
+                    <label for="studentUsername">Student ID</label>
+                    <input type="text" id="studentUsername" name="username" class="form-control" placeholder="Enter Student ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentPassword">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="studentPassword" name="password" class="form-control" placeholder="Enter password" required>
+                        <i class="fas fa-eye" id="togglePassword"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">Login as Student</button>
+            </form>
+        </div>
+        <div class="login-footer">
+            <a href="{{ url_for('home') }}" class="back-to-home">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#studentPassword');
+        togglePassword.addEventListener('click', function (e) {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REC Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .dashboard-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar - Updated Color #491a7e */
+    .sidebar {
+      width: 250px;
+      background: #491a7e;
+      color: white;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo img {
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 8px;
+      padding: 5px;
+    }
+
+    .logo-text h2 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .logo-text p {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 20px 0;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+
+    .sidebar-menu a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.3s;
+    }
+
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .sidebar-menu i {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    .top-bar {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logout-btn {
+      background: #e64a19;
+      color: white;
+      padding: 8px 15px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    /* Stats Cards - Updated Accent Color #e64a19 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #e64a19;
+    }
+
+    .stat-card i {
+      font-size: 40px;
+      margin-bottom: 15px;
+      color: #e64a19;
+    }
+
+    .stat-card h3 {
+      font-size: 32px;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .stat-card p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* Content Sections */
+    .content-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .content-section h2 {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      color: #491a7e;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    /* Announcements */
+    .announcements-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .announcement-card {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #e64a19;
+    }
+
+    .announcement-card h4 {
+      margin-bottom: 8px;
+      color: #491a7e;
+    }
+
+    .announcement-card p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .announcement-date {
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Today's Classes */
+    .today-classes {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .today-class {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+
+    .class-time {
+      background: #491a7e;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      text-align: center;
+      min-width: 80px;
+      margin-right: 15px;
+    }
+
+    .class-time .time {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .class-details h4 {
+      margin-bottom: 3px;
+      font-size: 15px;
+    }
+
+    .class-details p {
+      color: #666;
+      font-size: 13px;
+    }
+
+    /* Chart Container */
+    .chart-container {
+      height: 300px;
+      margin-top: 20px;
+    }
+
+    /* Admin Profile */
+    .admin-profile {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .profile-image {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #e64a19;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 60px;
+    }
+
+    .profile-details {
+      flex: 1;
+    }
+
+    .profile-details h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #491a7e;
+    }
+
+    .profile-info {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .info-item {
+      margin-bottom: 10px;
+    }
+
+    .info-item strong {
+      color: #491a7e;
+      display: inline-block;
+      width: 150px;
+    }
+
+    /* Attendance Progress */
+    .attendance-progress {
+      margin-top: 20px;
+    }
+
+    .progress-item {
+      margin-bottom: 15px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: #ecf0f1;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #e64a19;
+    }
+
+    /* Timetable Styles */
+    .timetable {
+      display: grid;
+      grid-template-columns: 80px repeat(5, 1fr);
+      gap: 1px;
+      background: #eee;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .timetable-header {
+      background: #491a7e;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .timetable-header.today {
+      background: #e64a19;
+    }
+
+    .time-slot {
+      background: #f9f9f9;
+      padding: 10px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .period {
+      background: white;
+      padding: 15px 10px;
+      text-align: center;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .subject {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .room {
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Upcoming Classes */
+    .upcoming-classes {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .class-card {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-left: 4px solid #e64a19;
+    }
+
+    .class-card .class-time {
+      background: #491a7e;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      text-align: center;
+      min-width: 100px;
+      margin-right: 15px;
+    }
+
+    .class-card .class-time .time {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .class-card .class-time .duration {
+      font-size: 12px;
+    }
+
+    .class-card .class-details {
+      flex: 1;
+    }
+
+    .class-card .class-details h4 {
+      margin-bottom: 5px;
+    }
+
+    .class-card .class-details p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* Teacher Cards */
+    .teachers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .teacher-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #e64a19;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .teacher-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #e64a19;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+    }
+
+    .teacher-info h4 {
+      margin-bottom: 5px;
+    }
+
+    .teacher-info p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    /* Exam Marks Table */
+    .marks-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .marks-table th, .marks-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .marks-table th {
+      background: #f8f9fa;
+      color: #491a7e;
+      font-weight: 600;
+    }
+
+    .marks-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    /* Course Cards */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .course-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #e64a19;
+    }
+
+    .course-card h4 {
+      margin-bottom: 10px;
+      color: #491a7e;
+    }
+
+    .course-card p {
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    /* Settings Styles */
+    .settings-section {
+      margin-bottom: 30px;
+    }
+
+    .settings-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .settings-item:last-child {
+      border-bottom: none;
+    }
+
+    .settings-info h4 {
+      margin-bottom: 5px;
+      color: #491a7e;
+    }
+
+    .settings-info p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .settings-value {
+      color: #666;
+    }
+
+    .logout-section {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+
+    .logout-btn-large {
+      background: #e64a19;
+      color: white;
+      padding: 12px 30px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Utility Classes */
+    .show {
+        display: flex !important; /* Overrides other display properties */
+    }
+
+    /* cover the page */
+    .modal {
+        overflow: auto;
+      transition: background 0.3s;
+    }
+
+    .logout-btn-large:hover {
+      background: #c0411a;
+    }
+
+    /* Page Content */
+    .page-content {
+      display: none;
+    }
+
+    .page-content.active {
+      display: block;
+    }
+
+    /* Admin specific styles */
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .admin-stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #e64a19;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .admin-stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .admin-stat-card i {
+      font-size: 40px;
+      margin-bottom: 15px;
+      color: #e64a19;
+    }
+
+    .admin-stat-card h3 {
+      font-size: 32px;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .admin-stat-card p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .admin-table th {
+      background: #f8f9fa;
+      color: #491a7e;
+      font-weight: 600;
+    }
+
+    .admin-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      color: white;
+    }
+
+    .btn-edit {
+      background: #1976d2;
+    }
+
+    .btn-delete {
+      background: #e64a19;
+    }
+
+    .btn-view {
+      background: #388e3c;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      background: #491a7e;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 70px;
+      }
+      
+      .sidebar .logo-text,
+      .sidebar-menu span {
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 70px;
+      }
+      
+      .sidebar-menu a {
+        justify-content: center;
+        padding: 15px;
+      }
+      
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .timetable {
+        grid-template-columns: 60px repeat(5, 1fr);
+        font-size: 14px;
+      }
+      
+      .period {
+        padding: 10px 5px;
+        min-height: 70px;
+      }
+      
+      .admin-profile {
+        flex-direction: column;
+      }
+      
+      .profile-info {
+        grid-template-columns: 1fr;
+      }
+      
+      .settings-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .sidebar {
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .top-bar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+    <img src="{{ url_for('static', filename='rec_logo.png') }}" alt="REC Logo">          <div class="logo-text">
+            <h2>REC Admin</h2>
+            <p>Dashboard</p>
+          </div>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li><a href="#dashboard" class="active" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+        <li><a href="#students" data-page="students"><i class="fas fa-user-graduate"></i> <span>Students</span></a></li>
+        <li><a href="#teachers" data-page="teachers"><i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span></a></li>
+        <li><a href="#courses" data-page="courses"><i class="fas fa-book"></i> <span>Courses</span></a></li>
+        <li><a href="#departments" data-page="departments"><i class="fas fa-building"></i> <span>Departments</span></a></li>
+        <li><a href="#attendance" data-page="attendance"><i class="fas fa-clipboard-check"></i> <span>Attendance</span></a></li>
+        <li><a href="#settings" data-page="settings"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="top-bar">
+        <h1 id="page-title">Admin Dashboard</h1>
+        <div class="user-info">
+          <span>Welcome, <strong>{{ name }} ({{ username }})</strong></span>
+          <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+
+      <div id="dashboard" class="page-content active">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}" style="padding: 15px; margin-bottom: 20px; border-radius: 5px; color: #fff; background-color: {{ '#28a745' if category == 'success' else '#dc3545' }};">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card" onclick="showPage('students')">
+            <i class="fas fa-user-graduate"></i>
+            <h3>{{ student_count }}</h3>
+            <p>Total Students</p>
+          </div>
+          <div class="admin-stat-card" onclick="showPage('teachers')">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <h3>{{ teacher_count }}</h3>
+            <p>Total Teachers</p>
+          </div>
+          <div class="admin-stat-card" onclick="showPage('courses')">
+            <i class="fas fa-book"></i>
+            <h3>{{ course_count }}</h3>
+            <p>Active Courses</p>
+          </div>
+          <div class="admin-stat-card" onclick="showPage('departments')">
+            <i class="fas fa-building"></i>
+            <h3>{{ department_count }}</h3>
+            <p>Departments</p>
+          </div>
+        </div>
+
+        <div class="dashboard-layout">
+          <div>
+            <div class="content-section">
+              <h2>Recent Announcements</h2>
+              <div class="announcements-list">
+                <div class="announcement-card">
+                  <h4>Mid-Term Examination Schedule</h4>
+                  <p>The mid-term examinations will be conducted from October 25th to November 5th. Please check the timetable on the notice board.</p>
+                  <div class="announcement-date">Posted: Oct 10, 2025</div>
+                </div>
+                <div class="announcement-card">
+                  <h4>Faculty Meeting</h4>
+                  <p>All faculty members are requested to attend the meeting on October 15th at 3:00 PM in the conference hall.</p>
+                  <div class="announcement-date">Posted: Oct 8, 2025</div>
+                </div>
+                <div class="announcement-card">
+                  <h4>Academic Calendar Update</h4>
+                  <p>The academic calendar for the next semester has been updated. Please check the admin portal for details.</p>
+                  <div class="announcement-date">Posted: Oct 5, 2025</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="content-section">
+              <h2>Recent Activities</h2>
+              <div class="today-classes">
+                <div class="today-class">
+                  <div class="class-time">
+                    <div class="time">Today</div>
+                  </div>
+                  <div class="class-details">
+                    <h4>New Student Registration</h4>
+                    <p>15 new students registered for Computer Science department</p>
+                  </div>
+                </div>
+                <div class="today-class">
+                  <div class="class-time">
+                    <div class="time">Today</div>
+                  </div>
+                  <div class="class-details">
+                    <h4>Course Update</h4>
+                    <p>Web Development course syllabus updated by Dr. Ananya Rao</p>
+                  </div>
+                </div>
+                <div class="today-class">
+                  <div class="class-time">
+                    <div class="time">Yesterday</div>
+                  </div>
+                  <div class="class-details">
+                    <h4>Attendance Report</h4>
+                    <p>Monthly attendance report generated for all departments</p>
+                  </div>
+                </div>
+                <div class="today-class">
+                  <div class="class-time">
+                    <div class="time">Yesterday</div>
+                  </div>
+                  <div class="class-details">
+                    <h4>Fee Payment</h4>
+                    <p>85% of students have paid their semester fees</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="content-section">
+              <h2>System Overview</h2>
+              <div class="chart-container">
+                <canvas id="systemChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="students" class="page-content">
+        <div class="content-section">
+          <h2>Student Management</h2>
+          <div class="action-buttons" style="margin-bottom: 20px;">
+            <button class="btn btn-view" onclick="showModal('addStudentModal')">
+              <i class="fas fa-plus"></i> Add Student
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Year</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for student in students %}
+                <tr>
+                  <td>{{ student.student_id }}</td>
+                  <td>{{ student.name }}</td>
+                  <td>{{ student.course }}</td>
+                  <td>{{ student.year }}</td>
+                  <td>{{ student.email }}</td>
+                  <td>{{ student.phone }}</td>
+                  <td class="action-buttons">
+                    <button class="btn btn-edit" 
+                            data-id="{{ student.id }}"
+                            data-student_id="{{ student.student_id }}"
+                            data-name="{{ student.name }}"
+                            data-email="{{ student.email }}"
+                            data-phone="{{ student.phone }}"
+                            data-course="{{ student.course }}"
+                            data-year="{{ student.year }}"
+                            onclick="openEditModal(this)">Edit
+                    </button>
+                    <form action="{{ url_for('delete_student', id=student.id) }}" method="POST" style="display:inline;">
+                      <button 
+                        type="submit" 
+                        class="btn btn-delete" 
+                        onclick="return confirm('Are you sure you want to delete this student?');">
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="teachers" class="page-content">
+        <div class="content-section">
+          <h2>Teacher Management</h2>
+          <div class="action-buttons" style="margin-bottom: 20px;">
+            <button class="btn btn-view" onclick="showModal('addTeacherModal')">
+              <i class="fas fa-plus"></i> Add Teacher
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Teacher ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                  <td>{{ teacher.teacher_id }}</td>
+                  <td>{{ teacher.name }}</td>
+                  <td>{{ teacher.department }}</td>
+                  <td>{{ teacher.email }}</td>
+                  <td>{{ teacher.phone }}</td>
+                  <td class="action-buttons">
+                    <button class="btn btn-edit"
+                            data-id="{{ teacher.id }}"
+                            data-teacher_id="{{ teacher.teacher_id }}"
+                            data-name="{{ teacher.name }}"
+                            data-email="{{ teacher.email }}"
+                            data-phone="{{ teacher.phone }}"
+                            data-department="{{ teacher.department }}"
+                            onclick="openEditTeacherModal(this)">
+                      Edit
+                    </button>
+                    <form action="{{ url_for('delete_teacher', id=teacher.id) }}" method="POST" style="display:inline;">
+                      <button 
+                        type="submit" 
+                        class="btn btn-delete" 
+                        onclick="return confirm('Are you sure you want to delete this teacher? This action cannot be undone.');">
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="courses" class="page-content">
+        <div class="content-section">
+          <h2>Course Management</h2>
+          <div class="action-buttons" style="margin-bottom: 20px;">
+            <button class="btn btn-view" onclick="showModal('addCourseModal')">
+              <i class="fas fa-plus"></i> Add Course
+            </button>
+          </div>          
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Course Code</th>
+                  <th>Course Name</th>
+                  <th>Instructor</th>
+                  <th>Department</th>
+                  <th>Credits</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for course in courses %}
+                <tr>
+                  <td>{{ course.code }}</td>
+                  <td>{{ course.name }}</td>
+                  <td>{{ course.instructor_name or 'N/A' }}</td>
+                  <td>{{ course.department }}</td>
+                  <td>{{ course.credits }}</td>
+                  <td class="action-buttons">
+                    <button class="btn btn-edit"
+                            data-id="{{ course.id }}"
+                            data-code="{{ course.code }}"
+                            data-name="{{ course.name }}"
+                            data-instructor_id="{{ course.instructor_id }}"
+                            data-credits="{{ course.credits }}"
+                            data-department="{{ course.department }}"
+                            onclick="openEditCourseModal(this)">
+                      Edit
+                    </button>
+                    <form action="{{ url_for('delete_course', id=course.id) }}" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this course?');">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="departments" class="page-content">
+        <div class="content-section">
+          <h2>Department Management</h2>
+          <div class="action-buttons" style="margin-bottom: 20px;">
+            <button class="btn btn-view" onclick="showModal('addDepartmentModal')">
+              <i class="fas fa-plus"></i> Add Department
+            </button>
+          </div>          
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Department Name</th>
+                  <th>Head of Department (HOD)</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for department in departments %}
+                <tr>
+                  <td>{{ department.code }}</td>
+                  <td>{{ department.name }}</td>
+                  <td>{{ department.hod }}</td>
+                  <td class="action-buttons">
+                    <button class="btn btn-view"
+                            data-code="{{ department.code }}"
+                            data-name="{{ department.name }}"
+                            data-hod="{{ department.hod }}"
+                            data-description="{{ department.description }}"
+                            onclick="openViewDepartmentModal(this)">View</button>
+                    <button class="btn btn-edit"
+                            data-id="{{ department.id }}"
+                            data-code="{{ department.code }}"
+                            data-name="{{ department.name }}"
+                            data-hod="{{ department.hod }}"
+                            data-description="{{ department.description }}"
+                            onclick="openEditDepartmentModal(this)">Edit</button>
+                    <form action="{{ url_for('delete_department', id=department.id) }}" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this department?');">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="attendance" class="page-content">
+        <div class="content-section">
+          <h2>Attendance Overview</h2>
+          <div class="chart-container">
+            <canvas id="attendanceChart"></canvas>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2>Department-wise Attendance</h2>
+          <div class="attendance-progress">
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Computer Science</span>
+                <span>92%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 92%"></div>
+              </div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Electronics & Communication</span>
+                <span>88%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 88%"></div>
+              </div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Electrical & Electronics</span>
+                <span>85%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 85%"></div>
+              </div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Mechanical Engineering</span>
+                <span>90%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 90%"></div>
+              </div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Civil Engineering</span>
+                <span>87%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 87%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="settings" class="page-content">
+        <div class="content-section">
+          <h2>Account Settings</h2>
+          <div class="settings-section">
+            <div class="settings-item">
+              <div class="settings-info">
+                <h4>Email Address</h4>
+                <p>This is the email address associated with your account.</p>
+              </div>
+              <div class="settings-value">admin@rec.edu</div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-info">
+                <h4>Phone Number</h4>
+                <p>This phone number is used for important notifications.</p>
+              </div>
+              <div class="settings-value">+91 98765 43200</div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-info">
+                <h4>Notification Preferences</h4>
+                <p>Enable or disable email notifications for system alerts.</p>
+              </div>
+              <div class="settings-value">
+                <input type="checkbox" id="toggle" checked>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-section">
+          <h2>Security</h2>
+          <div class="settings-section">
+            <div class="settings-item">
+              <div class="settings-info">
+                <h4>Change Password</h4>
+                <p>It's a good idea to use a strong password that you're not using elsewhere.</p>
+              </div>
+              <div class="settings-action">
+                <button class="logout-btn" onclick="showModal('changePasswordModal')">Change</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="logout-section">
+          <a href="#" class="logout-btn-large">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal" id="addStudentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New Student</h3>
+        <button class="close-btn" onclick="hideModal('addStudentModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="addStudentForm" action="{{ url_for('add_student') }}" method="POST">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentId">Student ID</label>
+              <input type="text" id="studentId" name="studentId" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" name="fullName" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="department">Department</label>
+              <select id="department" name="department" class="form-control" required>
+                <option value="">Select Department</option>
+                <option value="CSE">Computer Science</option>
+                <option value="ECE">Electronics & Communication</option>
+                <option value="EEE">Electrical & Electronics</option>
+                <option value="MECH">Mechanical</option>
+                <option value="CIVIL">Civil</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="year">Year</label>
+              <select id="year" name="year" class="form-control" required>
+                <option value="">Select Year</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-view" style="width: 100%;">Add Student</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Student Modal -->
+  <div class="modal" id="editStudentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Student Details</h3>
+        <button class="close-btn" onclick="hideModal('editStudentModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editStudentForm" method="POST">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editStudentId">Student ID</label>
+              <input type="text" id="editStudentId" name="studentId" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="editFullName">Full Name</label>
+              <input type="text" id="editFullName" name="fullName" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editEmail">Email</label>
+              <input type="email" id="editEmail" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="editPhone">Phone</label>
+              <input type="tel" id="editPhone" name="phone" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editDepartment">Department</label>
+              <select id="editDepartment" name="department" class="form-control" required>
+                <option value="CSE">Computer Science</option>
+                <option value="ECE">Electronics & Communication</option>
+                <option value="EEE">Electrical & Electronics</option>
+                <option value="MECH">Mechanical</option>
+                <option value="CIVIL">Civil</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editYear">Year</label>
+              <input type="number" id="editYear" name="year" class="form-control" min="1" max="4" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-view" style="width: 100%;">Update Student</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Teacher Modal -->
+  <div class="modal" id="editTeacherModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Teacher Details</h3>
+        <button class="close-btn" onclick="hideModal('editTeacherModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editTeacherForm" method="POST">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editTeacherId">Teacher ID</label>
+              <input type="text" id="editTeacherId" name="teacherId" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="editTeacherName">Full Name</label>
+              <input type="text" id="editTeacherName" name="teacherName" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editTeacherEmail">Email</label>
+              <input type="email" id="editTeacherEmail" name="teacherEmail" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="editTeacherPhone">Phone</label>
+              <input type="tel" id="editTeacherPhone" name="teacherPhone" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="editTeacherDepartment">Department</label>
+            <select id="editTeacherDepartment" name="teacherDepartment" class="form-control" required>
+              <option value="CSE">Computer Science</option>
+              <option value="ECE">Electronics & Communication</option>
+              <option value="EEE">Electrical & Electronics</option>
+              <option value="MECH">Mechanical</option>
+              <option value="CIVIL">Civil</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-view" style="width: 100%;">Update Teacher</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Add Teacher Modal -->
+  <div class="modal" id="addTeacherModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New Teacher</h3>
+        <button class="close-btn" onclick="hideModal('addTeacherModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="addTeacherForm" action="{{ url_for('add_teacher') }}" method="POST">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="teacherId">Teacher ID</label>
+              <input type="text" id="teacherId" name="teacherId" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="teacherName">Full Name</label>
+              <input type="text" id="teacherName" name="teacherName" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="teacherEmail">Email</label>
+              <input type="email" id="teacherEmail" name="teacherEmail" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="teacherPhone">Phone</label>
+              <input type="tel" id="teacherPhone" name="teacherPhone" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="teacherDepartment">Department</label>
+            <select id="teacherDepartment" name="teacherDepartment" class="form-control" required>
+              <option value="">Select Department</option>
+              <option value="CSE">Computer Science</option>
+              <option value="ECE">Electronics & Communication</option>
+              <option value="EEE">Electrical & Electronics</option>
+              <option value="MECH">Mechanical</option>
+              <option value="CIVIL">Civil</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="teacherPassword">Password</label>
+            <input type="password" id="teacherPassword" name="teacherPassword" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-view" style="width: 100%;">Add Teacher</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<!-- Edit Course Modal -->
+<div class="modal" id="editCourseModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Course Details</h3>
+            <button class="close-btn" onclick="hideModal('editCourseModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="editCourseForm" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editCourseCode">Course Code</label>
+                        <input type="text" id="editCourseCode" name="courseCode" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCourseName">Course Name</label>
+                        <input type="text" id="editCourseName" name="courseName" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editCourseInstructor">Instructor</label>
+                        <select id="editCourseInstructor" name="courseInstructor" class="form-control" required>
+                            <option value="">Select Instructor</option>
+                            {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCourseCredits">Credits</label>
+                        <input type="number" id="editCourseCredits" name="courseCredits" class="form-control" min="1" max="6" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editCourseDepartment">Department</label>
+                    <select id="editCourseDepartment" name="courseDepartment" class="form-control" required>
+                        <option value="CSE">Computer Science</option>
+                        <option value="ECE">Electronics & Communication</option>
+                        <option value="EEE">Electrical & Electronics</option>
+                        <option value="MECH">Mechanical</option>
+                        <option value="CIVIL">Civil</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-view" style="width: 100%;">Update Course</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Course Modal -->
+<div class="modal" id="addCourseModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Course</h3>
+            <button class="close-btn" onclick="hideModal('addCourseModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addCourseForm" action="{{ url_for('add_course') }}" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseCode">Course Code</label>
+                        <input type="text" id="courseCode" name="courseCode" class="form-control" placeholder="e.g., CS301" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseName">Course Name</label>
+                        <input type="text" id="courseName" name="courseName" class="form-control" placeholder="e.g., Data Structures" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseInstructor">Instructor</label>
+                        <select id="courseInstructor" name="courseInstructor" class="form-control" required>
+                            <option value="">Select Instructor</option>
+                            {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseCredits">Credits</label>
+                        <input type="number" id="courseCredits" name="courseCredits" class="form-control" min="1" max="6" placeholder="e.g., 4" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="courseDepartment">Department</label>
+                    <select id="courseDepartment" name="courseDepartment" class="form-control" required>
+                        <option value="">Select Department</option>
+                        <option value="CSE">Computer Science</option>
+                        <option value="ECE">Electronics & Communication</option>
+                        <option value="EEE">Electrical & Electronics</option>
+                        <option value="MECH">Mechanical</option>
+                        <option value="CIVIL">Civil</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-view" style="width: 100%;">Add Course</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+  <!-- View Teacher Modal -->
+  <div class="modal" id="viewTeacherModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Teacher Details</h3>
+        <button class="close-btn" onclick="hideModal('viewTeacherModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-info" id="viewTeacherDetails">
+            <div class="info-item">
+                <strong>Teacher ID:</strong> <span id="viewTeacherId"></span>
+            </div>
+            <div class="info-item">
+                <strong>Name:</strong> <span id="viewTeacherName"></span>
+            </div>
+            <div class="info-item">
+                <strong>Email:</strong> <span id="viewTeacherEmail"></span>
+            </div>
+            <div class="info-item">
+                <strong>Phone:</strong> <span id="viewTeacherPhone"></span>
+            </div>
+            <div class="info-item">
+                <strong>Department:</strong> <span id="viewTeacherDepartment"></span>
+            </div>
+            <div class="info-item">
+                <strong>Joined On:</strong> <span id="viewTeacherJoined"></span>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- View Department Modal -->
+<div class="modal" id="viewDepartmentModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Department Details</h3>
+      <button class="close-btn" onclick="hideModal('viewDepartmentModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="profile-info" id="viewDepartmentDetails">
+          <div class="info-item">
+              <strong>Department Code:</strong> <span id="viewDepartmentCode"></span>
+          </div>
+          <div class="info-item">
+              <strong>Department Name:</strong> <span id="viewDepartmentName"></span>
+          </div>
+          <div class="info-item">
+              <strong>Head of Department:</strong> <span id="viewDepartmentHod"></span>
+          </div>
+          <div class="info-item" style="grid-column: 1 / -1;">
+              <strong>Description:</strong> <p id="viewDepartmentDescription" style="margin-top: 5px; color: #666;"></p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Department Modal -->
+<div class="modal" id="editDepartmentModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Department Details</h3>
+            <button class="close-btn" onclick="hideModal('editDepartmentModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="editDepartmentForm" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editDepartmentCode">Department Code</label>
+                        <input type="text" id="editDepartmentCode" name="departmentCode" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDepartmentName">Department Name</label>
+                        <input type="text" id="editDepartmentName" name="departmentName" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editDepartmentHOD">Head of Department</label>
+                        <input type="text" id="editDepartmentHOD" name="departmentHOD" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editDepartmentDescription">Department Description</label>
+                    <textarea id="editDepartmentDescription" name="departmentDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-view" style="width: 100%;">Update Department</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Add Department Modal -->
+<div class="modal" id="addDepartmentModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Department</h3>
+            <button class="close-btn" onclick="hideModal('addDepartmentModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addDepartmentForm" action="{{ url_for('add_department') }}" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departmentCode">Department Code</label>
+                        <input type="text" id="departmentCode" name="departmentCode" class="form-control" placeholder="e.g., CSE" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="departmentName">Department Name</label>
+                        <input type="text" id="departmentName" name="departmentName" class="form-control" placeholder="e.g., Computer Science" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departmentHOD">Head of Department</label>
+                        <input type="text" id="departmentHOD" name="departmentHOD" class="form-control" placeholder="e.g., Dr. Vignesh Kumar" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="departmentStudents">Number of Students</label>
+                        <input type="number" id="departmentStudents" name="departmentStudents" class="form-control" min="1" placeholder="e.g., 425" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departmentFaculty">Number of Faculty</label>
+                        <input type="number" id="departmentFaculty" name="departmentFaculty" class="form-control" min="1" placeholder="e.g., 18" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="departmentCourses">Number of Courses</label>
+                        <input type="number" id="departmentCourses" name="departmentCourses" class="form-control" min="1" placeholder="e.g., 12" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="departmentDescription">Department Description</label>
+                    <textarea id="departmentDescription" name="departmentDescription" class="form-control" rows="3" placeholder="Enter department description..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-view" style="width: 100%;">Add Department</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal" id="changePasswordModal">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3>Change Admin Password</h3>
+      <button class="close-btn" onclick="hideModal('changePasswordModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="changePasswordForm" action="{{ url_for('admin_change_password') }}" method="POST">
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" name="newPassword" class="form-control" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm New Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-view" style="width: 100%;">Update Password</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.add('show');
+    }
+
+    function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('show');
+    }
+</script>
+
+
+<script>
+    function showPage(pageId) {
+        // Hide all page contents
+        var pageContents = document.querySelectorAll('.page-content');
+        pageContents.forEach(function(page) {
+            page.classList.remove('active');
+        });
+
+        // Show the selected page
+        var selectedPage = document.getElementById(pageId);
+        if (selectedPage) {
+            selectedPage.classList.add('active');
+        }
+
+        // Update the page title
+        var pageTitle = document.getElementById('page-title');
+        if (pageTitle) {
+            pageTitle.textContent = pageId.charAt(0).toUpperCase() + pageId.slice(1); // Capitalize first letter
+        }
+    }
+
+    // Add event listeners to sidebar links
+    document.addEventListener('DOMContentLoaded', function() {
+        var sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+        sidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default link behavior
+                showPage(this.getAttribute('data-page'));
+            });
+        });
+    });
+
+    // Function to open and populate the edit modal
+    function openEditModal(button) {
+        const id = button.getAttribute('data-id');
+        const form = document.getElementById('editStudentForm');
+        form.action = `/update_student/${id}`;
+        document.getElementById('editStudentId').value = button.getAttribute('data-student_id');
+        document.getElementById('editFullName').value = button.getAttribute('data-name');
+        document.getElementById('editEmail').value = button.getAttribute('data-email');
+        document.getElementById('editPhone').value = button.getAttribute('data-phone');
+        document.getElementById('editDepartment').value = button.getAttribute('data-course');
+        document.getElementById('editYear').value = button.getAttribute('data-year');
+        
+        showModal('editStudentModal');
+    }
+
+    // Function to open and populate the view teacher modal
+    function openViewTeacherModal(teacher) {
+        document.getElementById('viewTeacherId').textContent = teacher.teacher_id;
+        document.getElementById('viewTeacherName').textContent = teacher.name;
+        document.getElementById('viewTeacherEmail').textContent = teacher.email;
+        document.getElementById('viewTeacherPhone').textContent = teacher.phone;
+        document.getElementById('viewTeacherDepartment').textContent = teacher.department;
+        document.getElementById('viewTeacherJoined').textContent = new Date(teacher.created_at).toLocaleDateString();
+
+        showModal('viewTeacherModal');
+    }
+
+    // Function to open and populate the edit teacher modal
+    function openEditTeacherModal(button) {
+        const id = button.getAttribute('data-id');
+        const form = document.getElementById('editTeacherForm');
+        form.action = `/update_teacher/${id}`;
+        document.getElementById('editTeacherId').value = button.getAttribute('data-teacher_id');
+        document.getElementById('editTeacherName').value = button.getAttribute('data-name');
+        document.getElementById('editTeacherEmail').value = button.getAttribute('data-email');
+        document.getElementById('editTeacherPhone').value = button.getAttribute('data-phone');
+        document.getElementById('editTeacherDepartment').value = button.getAttribute('data-department');
+        
+        showModal('editTeacherModal');
+    }
+
+    // Function to open and populate the edit course modal
+    function openEditCourseModal(button) {
+        const id = button.getAttribute('data-id');
+        const form = document.getElementById('editCourseForm');
+        form.action = `/update_course/${id}`;
+        document.getElementById('editCourseCode').value = button.getAttribute('data-code');
+        document.getElementById('editCourseName').value = button.getAttribute('data-name');
+        document.getElementById('editCourseInstructor').value = button.getAttribute('data-instructor_id');
+        document.getElementById('editCourseCredits').value = button.getAttribute('data-credits');
+        document.getElementById('editCourseDepartment').value = button.getAttribute('data-department');
+        
+        showModal('editCourseModal');
+    }
+
+    // Function to open and populate the view department modal
+    function openViewDepartmentModal(button) {
+        document.getElementById('viewDepartmentCode').textContent = button.getAttribute('data-code');
+        document.getElementById('viewDepartmentName').textContent = button.getAttribute('data-name');
+        document.getElementById('viewDepartmentHod').textContent = button.getAttribute('data-hod');
+        const description = button.getAttribute('data-description');
+        document.getElementById('viewDepartmentDescription').textContent = description ? description : 'No description provided.';
+
+        showModal('viewDepartmentModal');
+    }
+
+    // Function to open and populate the edit department modal
+    function openEditDepartmentModal(button) {
+        const id = button.getAttribute('data-id');
+        const form = document.getElementById('editDepartmentForm');
+        form.action = `/update_department/${id}`;
+        document.getElementById('editDepartmentCode').value = button.getAttribute('data-code');
+        document.getElementById('editDepartmentName').value = button.getAttribute('data-name');
+        document.getElementById('editDepartmentHOD').value = button.getAttribute('data-hod');
+        document.getElementById('editDepartmentDescription').value = button.getAttribute('data-description');
+
+        showModal('editDepartmentModal');
+    }
+
+</script>
+</body>
+</html>

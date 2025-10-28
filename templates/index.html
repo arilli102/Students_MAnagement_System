@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rajalakshmi Engineering College - Student Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #491a7e;
+            --secondary: #e64a19;
+            --light: #f5f5f5;
+            --dark: #333;
+            --accent: #2196f3;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .top-bar {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .top-bar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contact-info span {
+            margin-right: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            margin-left: 15px;
+            font-size: 16px;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 70px;
+            margin-right: 15px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: var(--dark);
+        }
+
+        .login-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: rgba(113, 8, 139, 0.726);
+            transform: translateY(-2px);
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-menu li {
+            position: relative;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .dropdown-menu a {
+            color: var(--dark);
+            padding: 12px 16px;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(26, 35, 126, 0.8), rgba(26, 35, 126, 0.9)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #e64a19;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 32px;
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--secondary);
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Academics Section */
+        .academics {
+            background-color: var(--light);
+        }
+
+        .academics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .academic-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .academic-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .academic-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .academic-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .academic-card:hover .academic-image img {
+            transform: scale(1.1);
+        }
+
+        .academic-content {
+            padding: 20px;
+        }
+
+        .academic-content h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Placements Section */
+        .placement-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card i {
+            font-size: 40px;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .stat-card h3 {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .companies {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .company-logo {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 80px;
+        }
+
+        .company-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 60px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .login-options {
+            padding: 30px;
+        }
+
+        .login-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-option:hover {
+            border-color: var(--accent);
+            background-color: #f9f9f9;
+        }
+
+        .login-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .login-text h4 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .top-bar-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .main-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+            }
+
+            .dropdown-menu {
+                position: static;
+                box-shadow: none;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .hero h2 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="top-bar">
+            <div class="container top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone"></i> +91 44 1234 5678</span>
+                    <span><i class="fas fa-envelope"></i> info@rajalakshmi.org</span>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container main-header">
+            <div class="logo">
+                <img src="images/REC Chennai_idsdZMbSSX_0.png" alt="Rajalakshmi Institutions Logo">
+                <div class="logo-text">
+                    <h1>Rajalakshmi Engineering College</h1>
+                    <p>Shaping Futures, Creating Excellence</p>
+                </div>
+            </div>
+            <button class="login-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav>
+            <div class="container">
+                <ul class="nav-menu">
+                    <li><a href="#">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#">About <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">About College</a></li>
+                            <li><a href="#">Vision & Mission</a></li>
+                            <li><a href="#">Leadership</a></li>
+                            <li><a href="#">Awards & Accolades</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Academics <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Programs Offered</a></li>
+                            <li><a href="#">Departments</a></li>
+                            <li><a href="#">Faculty</a></li>
+                            <li><a href="#">Academic Calendar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Admissions</a></li>
+                    <li><a href="#">Research</a></li>
+                    <li><a href="#">Campus Life</a></li>
+                    <li><a href="#">Placements</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Welcome to Rajalakshmi Engineering College</h2>
+            <p>Excellence in Education, Innovation in Approach, Commitment to Society</p>
+            <a href="#" class="cta-button">Explore Our Programs</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>About Us</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Rajalakshmi Institutions, established in 1997, has emerged as a premier institution offering quality technical education. With state-of-the-art infrastructure and experienced faculty, we are committed to nurturing future leaders and innovators.</p>
+                    <p>Our institution offers a wide range of undergraduate, postgraduate and doctoral programs in engineering, management and computer applications. We focus on holistic development through academic excellence, research initiatives and industry collaborations.</p>
+                    <p>The campus spread over 45 acres provides an ideal environment for learning and growth with modern laboratories, libraries, sports facilities and hostel accommodations.</p>
+                </div>
+                <div class="about-image">
+                    <img src="images/academics.jpg" alt="College Campus">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academics Section -->
+    <section id="academics" class="academics">
+        <div class="container">
+            <div class="section-title">
+                <h2>Academics</h2>
+            </div>
+            <div class="academics-grid">
+                <div class="academic-card">
+                    <div class="academic-image">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Engineering Programs">
+                    </div>
+                    <div class="academic-content">
+                        <h3>Engineering</h3>
+                        <p>B.Tech programs in Computer Science, Mechanical, Civil, ECE, EEE and more with industry-oriented curriculum and hands-on learning.</p>
+                    </div>
+                </div>
+                <div class="academic-card">
+                    <div class="academic-image">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Management Programs">
+                    </div>
+                    <div class="academic-content">
+                        <h3>Management</h3>
+                        <p>MBA program with specializations in Marketing, Finance, HR and Operations, focusing on developing business leaders.</p>
+                    </div>
+                </div>
+                <div class="academic-card">
+                    <div class="academic-image">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Computer Applications">
+                    </div>
+                    <div class="academic-content">
+                        <h3>Computer Applications</h3>
+                        <p>BCA and MCA programs designed to build strong foundation in computer applications and software development.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Placements Section -->
+    <section id="placements">
+        <div class="container">
+            <div class="section-title">
+                <h2>Placements</h2>
+            </div>
+            <div class="placement-stats">
+                <div class="stat-card">
+                    <i class="fas fa-user-graduate"></i>
+                    <h3>95%</h3>
+                    <p>Placement Rate</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-rupee-sign"></i>
+                    <h3>12 LPA</h3>
+                    <p>Highest Package</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-building"></i>
+                    <h3>200+</h3>
+                    <p>Recruiting Companies</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>5.5 LPA</h3>
+                    <p>Average Package</p>
+                </div>
+            </div>
+            <div class="section-title">
+                <h3>Our Recruiters</h3>
+            </div>
+            <div class="companies">
+                <div class="company-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft">
+                </div>
+                <div class="company-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon">
+                </div>
+                <div class="company-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
+                </div>
+                <div class="company-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="IBM">
+                </div>
+                <div class="company-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Google_logo_%282013-2015%29.svg" alt="Google">
+                </div>
+                <div class="company-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Infosys_logo.svg" alt="Infosys">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Academics</a></li>
+                        <li><a href="#">Admissions</a></li>
+                        <li><a href="#">Research</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Programs</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">B.Tech Programs</a></li>
+                        <li><a href="#">MBA</a></li>
+                        <li><a href="#">BCA</a></li>
+                        <li><a href="#">MCA</a></li>
+                        <li><a href="#">Ph.D Programs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> Rajalakshmi Nagar, Chennai, Tamil Nadu</li>
+                        <li><i class="fas fa-phone"></i> +91 44 1234 5678</li>
+                        <li><i class="fas fa-envelope"></i> info@rajalakshmi.org</li>
+                        <li><i class="fas fa-globe"></i> www.rajalakshmi.org</li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to our newsletter for the latest updates and news.</p>
+                    <form>
+                        <input type="email" placeholder="Your Email" style="padding: 10px; width: 100%; margin: 10px 0; border-radius: 4px; border: none;">
+                        <button type="submit" style="background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Rajalakshmi Institutions. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Login to Portal</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="login-options">
+                <div class="login-option" onclick="redirectToLogin('admin')">
+                    <div class="login-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="login-text">
+                        <h4>Admin Login</h4>
+                        <p>Access admin portal</p>
+                    </div>
+                </div>
+                <div class="login-option" onclick="redirectToLogin('student')">
+                    <div class="login-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="login-text">
+                        <h4>Student Login</h4>
+                        <p>Access student portal</p>
+                    </div>
+                </div>
+                <div class="login-option" onclick="redirectToLogin('teacher')">
+                    <div class="login-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="login-text">
+                        <h4>Teacher Login</h4>
+                        <p>Access faculty portal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeModal = document.getElementById('closeModal');
+
+        // Show login modal
+        loginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+        });
+
+        // Close login modal
+        closeModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+        });
+
+        // Function to redirect to login pages
+        function redirectToLogin(role) {
+            // Use url_for to generate the correct URL for the Flask route
+            let url = '';
+            if (role === 'admin')      url = "{{ url_for('admin_login') }}";
+            else if (role === 'student') url = "{{ url_for('student_login') }}";
+            else if (role === 'teacher') url = "{{ url_for('teacher_login') }}"; // This line was missing
+            
+            if (url) window.location.href = url;
+        }
+    </script>
+</body>
+</html>
