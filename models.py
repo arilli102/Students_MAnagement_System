@@ -1,11 +1,11 @@
 def init_database():
     import mysql.connector
     from config import DB_CONFIG
-    
+
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-    
-    # Create tables
+
+    # --- Create tables safely ---
     tables = [
         """
         CREATE TABLE IF NOT EXISTS students (
@@ -75,46 +75,63 @@ def init_database():
             description TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-        """,
-        """
-        ALTER TABLE courses
-        DROP COLUMN description 
         """
     ]
-    
+
     for table in tables:
         cursor.execute(table)
-    
-    # Insert sample data
-    
-    # Sample admin
-    cursor.execute("INSERT IGNORE INTO admin_users (username, password, email) VALUES (%s, %s, %s)",
-                  ('admin', 'admin123', 'admin@rec.edu')
-    )    
+
+    # --- Safely drop 'description' column from courses if it exists ---
+    cursor.execute("""
+        SELECT COUNT(*) 
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_NAME='courses' AND COLUMN_NAME='description'
+    """)
+    if cursor.fetchone()[0]:
+        cursor.execute("ALTER TABLE courses DROP COLUMN description")
+
+    # --- Insert sample data ---
+
+    # Sample admin user
+    cursor.execute("""
+        INSERT IGNORE INTO admin_users (username, password, email)
+        VALUES (%s, %s, %s)
+    """, ('admin', 'admin123', 'admin@rec.edu'))
+
     # Sample student
-    cursor.execute("""INSERT IGNORE INTO students 
-                   (student_id, name, email, phone, date_of_birth, course, year, password) 
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
-                  ('REC2023001', 'John Doe', 'john.doe@rec.edu', '9876543210', '2000-01-15', 'Computer Science', 3, 'student123'))
-    
+    cursor.execute("""
+        INSERT IGNORE INTO students 
+        (student_id, name, email, phone, date_of_birth, course, year, password)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    """, ('REC2023001', 'John Doe', 'john.doe@rec.edu', '9876543210',
+          '2000-01-15', 'Computer Science', 3, 'student123'))
+
     # Sample teacher
-    cursor.execute("""INSERT IGNORE INTO teachers 
-                   (teacher_id, name, email, phone, department, password) 
-                   VALUES (%s, %s, %s, %s, %s, %s)""",
-                  ('TREC001', 'Dr. Smith', 'smith@rec.edu', '9876543211', 'cse', 'teacher123'))
-    # Sample parent
+    cursor.execute("""
+        INSERT IGNORE INTO teachers 
+        (teacher_id, name, email, phone, department, password)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, ('TREC001', 'Dr. Smith', 'smith@rec.edu', '9876543211', 'cse', 'teacher123'))
+
+    # Sample parent (linked to John Doe)
     cursor.execute("SELECT id FROM students WHERE student_id = 'REC2023001'")
     student = cursor.fetchone()
     if student:
-        cursor.execute("""INSERT IGNORE INTO parents 
-                       (name, email, phone, student_id, password) 
-                       VALUES (%s, %s, %s, %s, %s)""",
-                    ('Robert Doe', 'robert.doe@email.com', '9876543212', student[0], 'parent123'))
-    
+        cursor.execute("""
+            INSERT IGNORE INTO parents 
+            (name, email, phone, student_id, password)
+            VALUES (%s, %s, %s, %s, %s)
+        """, ('Robert Doe', 'robert.doe@email.com', '9876543212', student[0], 'parent123'))
+
+    # Commit all changes
     conn.commit()
+
+    # Close everything
     cursor.close()
     conn.close()
 
+    print("Database initialized successfully!")
+
+
 if __name__ == "__main__":
     init_database()
-    print("Database initialized successfully!")

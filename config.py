@@ -1,6 +1,6 @@
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': '2002',
+    'password': '2005',
     'database': 'college_db'
 }
